@@ -1,6 +1,6 @@
 package lab1
 
-class Answer (
+data class Answer (
     val ns: String,
     val title: String,
     val pageid: String,
@@ -10,44 +10,47 @@ class Answer (
     val timestamp: String
 )
 
-fun parserURL(request: String): List<Answer>?{
+fun parserUrlAnswer(request: String): List<Answer>?{
     if (request.isEmpty()) return null
-    val splitString = request.split(']')
-    val listBooks = mutableListOf<Answer>()
+    val splitString = request.split("},{")
+    val listAnswers = mutableListOf<Answer>()
     var perem: String
-    if (str in splitString) {
+    for (str in splitString) {
         perem = str
-        perem = perem.substringAfter('[')
+        perem = perem.substringAfter('{')
         perem = perem.substringAfter(':')
+        perem = perem.substringAfter('[').trim()
+        //println(perem)
         val ns = perem.substringBefore(",").trim() //ns
 
-        perem = perem.substringAfter(":")
-        val title = perem.substringBeforeLast(",").trim()
+        perem = perem.substringAfter(":\"")
+        val title = perem.substringBefore("\",\"").trim()
         if (title.isEmpty()) {
             throw IllegalArgumentException("This answer has no title")
         }//title
 
-        perem = perem.substringAfter(":")
-        val pageid = perem.substringBeforeLast(",").trim()
+        //perem = perem.substringAfter("\":").trim()
+        perem = perem.substringAfter("\":")
+        //println(perem)
+        val pageid = perem.substringBefore(",").trim()
         if (pageid.isEmpty()) {
             throw IllegalArgumentException("This answer has no page id, so we can't open it")
         }//pageid
 
-        perem = perem.substringAfter(":")
-        val size = perem.substringBeforeLast(",").trim() //size
+        perem = perem.substringAfter("\":")
+        val size = perem.substringBefore(",").trim() //size
 
-        perem = perem.substringAfter(":")
-        val wordcount = perem.substringBeforeLast(",").trim() //wordcount
+        perem = perem.substringAfter("\":")
+        val wordcount = perem.substringBefore(",").trim() //wordcount
 
-        perem = perem.substringAfter(":")
-        val snippet = perem.substringBeforeLast(",").trim() //snippet
+        perem = perem.substringAfter("\":")
+        val snippet = perem.substringBefore(",").trim() //snippet
 
-        perem = perem.substringAfter(":")
-        val timestamp = perem.substringBeforeLast(",").trim() //timestamp
+        perem = perem.substringAfter("\":\"")
+        val timestamp = perem.substringBefore("\"").trim() //timestamp
 
         val fullInfo = Answer(ns, title, pageid, size, wordcount, snippet, timestamp)
-        listAnswer.add(fullInfo)
+        listAnswers.add(fullInfo)
     }
-    return listAnswer
-
+    return listAnswers
 }
