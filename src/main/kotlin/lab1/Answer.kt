@@ -54,3 +54,15 @@ fun parserUrlAnswer(request: String): List<Answer>?{
     }
     return listAnswers
 }
+
+fun printAnswer(listAns: List<Answer>?): List<String>{
+    val listOfTopic: MutableList<String> = mutableListOf()
+    var newTopic = ""
+    var i = 1
+    for(topic in listAns!!){
+        newTopic = "$i. " + topic.title + ", pageid=" + topic.pageid
+        listOfTopic.add(newTopic)
+        i++
+    }
+    return listOfTopic
+}
