@@ -25,8 +25,7 @@ fun main() {
     val request = connection.inputStream.bufferedReader().readText()
     val listAnswers: List<Answer>? = parserUrlAnswer(request)
     val listRequest: List<String> = printAnswer(listAnswers)
-//    println("Results of request: ${listAnswers}")
-//    println("Results of request: ${listRequest}")
+
     listRequest.forEach(::println)
 
     while (!flagPageid) {
