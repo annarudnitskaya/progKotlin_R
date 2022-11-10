@@ -1,13 +1,16 @@
 package lab2
 
-import javax.xml.parsers.DocumentBuilder
-import javax.xml.parsers.DocumentBuilderFactory
+import org.w3c.dom.*
+import java.nio.file.Files
+import java.nio.file.Paths
+import org.w3c.dom.Document
 import org.w3c.dom.NamedNodeMap
-import lab1.Answer
-import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
-import org.w3c.dom.Document
+import javax.xml.parsers.DocumentBuilder
+import javax.xml.parsers.DocumentBuilderFactory
+import java.io.BufferedReader
+import java.io.InputStream
 
 
 class WithFile {
@@ -37,49 +40,29 @@ class WithFile {
 //                File("addressBook.txt").appendText( city + " " + street + " " + house + " " +  floorsNum + "\n")
                 listAddresses.add(fullInfo)
             }
-        getStatistics(map, createHashMap2(listAddresses))
-
+        getStatistics(createHashMap2(listAddresses), createHashMap2(listAddresses))
         return listAddresses
     }
 
     // CSV
     fun readCSV(filePath: String):List<Address> {
  //       val file = File(filePath).readLines()
-        val file = File(filePath).readText()
+//       val file = File(filePath).readText()
 
-        val listAddresses = mutableListOf<Address>()
-        val startTime = System.currentTimeMillis()
-        val hashMap: HashMap<Address, Int> = HashMap()
-      //  val file1 = File("addressBook.txt")
-//        val bufferedReader = BufferedReader(FileReader("filePath"))
-//        if (file.isEmpty()) return null
-        val splitString = file.split('\n')
-        var perem: String
-        for (str in splitString) {
-                perem = str
-                perem = perem.substringAfter("\"city\";\"street\";\"house\";\"floor\"").trim()
-
-                perem = perem.substringAfter("\n").trim()
-
-                perem = perem.substringAfter("\"").trim()
-                val city = perem.substringBefore("\"").trim() //city
-
-                perem = perem.substringAfter("\";\"")
-                val street = perem.substringBefore("\"").trim() //street
-
-                perem = perem.substringAfter("\";").trim()
-                val house = perem.substringBefore(";").trim() //house
-
-                perem = perem.substringAfter(";").trim()
-                val floorsNum = perem.substringBefore(";").trim() //floors
-                println(city + " " + street + " " + house + " " +  floorsNum)
-                val fullInfo = Address(city, street, house, floorsNum)
-                listAddresses.add(fullInfo)
-                File("addressBook.txt").appendText( city + " " + street + " " + house + " " +  floorsNum + "\n")
-            }
-        return listAddresses
-
-
+            var listAddresses = mutableListOf<Address>()
+//        val startTime = System.currentTimeMillis()
+//        val hashMap: HashMap<Address, Int> = HashMap()
+//        val InStr = file.inputStream()
+        val reader = BufferedReader(FileReader(filePath))
+        val header = reader.readLine()
+        listAddresses = reader.lineSequence()
+            .filter { it.isNotBlank() }
+            .map {
+                val (city, street, house, floorsNum) = it.split(';', ignoreCase = false, limit = 4)
+                Address(city.trim().removeSurrounding("\""), street.trim().removeSurrounding("\""), house.trim(), floorsNum.trim())
+            }.toList().toMutableList()
+        getStatistics(createHashMap2(listAddresses), createHashMap2(listAddresses))
+      return listAddresses
     }
 
     fun createHashMap2(list: List<Address>): HashMap<Address, Int> {
@@ -100,7 +83,7 @@ class WithFile {
 //            println("${map[address]}")
         }
 
-        fun getStatistics(map: HashMap<String, Int>, map2: HashMap<Address, Int>){
+        fun getStatistics(map: HashMap<Address, Int>, map2: HashMap<Address, Int>){
             for (it in map){
                 if (it.value > 1)
                     println("Address ${it.key} repeated ${it.value} times")
@@ -115,7 +98,7 @@ class WithFile {
                     val counter = map2.filterKeys { i.key.city == it.city }
                     for (help in 1..5){
                         val amount = counter.filterKeys { help == it.floorsNum.toInt()}.count()
-                        println("In the city of ${i.key.city} there are $amount buildings with a height of ${i.key.floorsNum} floors")
+                        println("In the city of ${i.key.city} there are $amount buildings with a height of $help floors")
                     }
                     listOfCity.add(i.key.city)
                 }
@@ -123,6 +106,7 @@ class WithFile {
             }
         }
 }
+
 
 
 
