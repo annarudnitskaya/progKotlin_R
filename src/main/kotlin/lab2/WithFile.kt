@@ -12,41 +12,24 @@ import javax.xml.parsers.DocumentBuilderFactory
 class WithFile {
     // XML
     fun readXML(filePath: String):List<Address> {
-//        val file = File(filePath).readText()
-        val file = File(filePath).readLines()
         val listAddresses = mutableListOf<Address>()
-        val startTime = System.currentTimeMillis()
+//        val startTime = System.currentTimeMillis()
         val map: HashMap<String, Int> = HashMap()
-      //  val file1 = File("addressBook.txt")
-//        val bufferedReader = BufferedReader(FileReader(filePath))
-//        if (file.isEmpty()) return null
-//        val splitString = file.split('\n')
-        var perem: String
-        for (i in file.withIndex()) {
-//        for (str in splitString) {
-            perem = i.toString()
-            perem = perem.substringAfter("<?xml version=\"1.0\" encoding=\"utf-8\"?> )").trim()
-//            perem = perem.substringAfter("\n").trim()
-            perem = perem.substringAfter("<root> )").trim()
-//            perem = perem.substringAfter("\n").trim()
-//            perem = perem.substringAfter("</root>").trim()
-//            perem = perem.substringAfter("\n").trim()
-//            perem=perem.substringAfter("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + "<root>").trim()
-//                perem = perem.substringAfter("<root>\n").trim()
-                perem = perem.substringAfter("<item city=\"").trim()
-                val city = perem.substringBefore("\"").trim() //city
-                //   println(city)
-                perem = perem.substringAfter("\" street=\"")
-                val street = perem.substringBefore("\"").trim() //street
-
-                perem = perem.substringAfter("\" house=\"").trim()
-                val house = perem.substringBefore("\"").trim() //house
-
-                perem = perem.substringAfter("\" floor=\"").trim()
-                val floorsNum = perem.substringBefore("\"").trim() //floors
-
-
-//                println(city + " " + street + " " + house + " " +  floorsNum)
+        // Получение фабрики, чтобы после получить билдер документов
+        val factory = DocumentBuilderFactory.newInstance()
+        // Получили из фабрики билдер, который парсит XML, создает структуру Document в виде иерархического дерева
+        val builder: DocumentBuilder = factory.newDocumentBuilder()
+        // Запарсили XML, создав структуру Document. Теперь у нас есть доступ ко всем элементам, каким нам нужно
+        val document: Document = builder.parse(File(filePath))
+        // Получение списка всех элементов item внутри корневого элемента (getDocumentElement возвращает ROOT элемент XML файла)
+        val item = document.getElementsByTagName("item")
+        for (i in 0 until item.length) {
+            // Атрибут - тоже Node, потому нам нужно получить значение атрибута с помощью метода getNodeValue()
+            val attributes: NamedNodeMap = item.item(i).attributes
+            val city: String = attributes.getNamedItem("city").nodeValue
+            val street: String = attributes.getNamedItem("street").nodeValue
+            val house: String = attributes.getNamedItem("house").nodeValue
+            val floorsNum: String = attributes.getNamedItem("floor").nodeValue
                 val fullInfo = Address(city, street, house, floorsNum)
                 val info = city + " " + street + " " + house + " " + floorsNum
                 createHashMap(info, map)
@@ -57,7 +40,8 @@ class WithFile {
 
         return listAddresses
     }
-
+    
+    
     // CSV
     fun readCSV(filePath: String):List<Address> {
  //       val file = File(filePath).readLines()
