@@ -8,7 +8,6 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 import org.w3c.dom.Document
-import javax.xml.parsers.DocumentBuilderFactory
 
 
 class WithFile {
@@ -42,8 +41,7 @@ class WithFile {
 
         return listAddresses
     }
-    
-    
+
     // CSV
     fun readCSV(filePath: String):List<Address> {
  //       val file = File(filePath).readLines()
