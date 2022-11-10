@@ -1,6 +1,8 @@
 package lab2
 
-
+import javax.xml.parsers.DocumentBuilder
+import javax.xml.parsers.DocumentBuilderFactory
+import org.w3c.dom.NamedNodeMap
 import lab1.Answer
 import java.io.BufferedReader
 import java.io.File
