@@ -5,4 +5,9 @@ class Address(
     val street: String,
     val house: String,
     val floorsNum: String
-    )
+)
+//{
+//    fun create(city: String, street: String, house: String, floorsNum: String): Address{
+//
+//    }
+//}
