@@ -17,7 +17,7 @@ class WithFile {
     // XML
     fun readXML(filePath: String):List<Address> {
         val listAddresses = mutableListOf<Address>()
-//        val startTime = System.currentTimeMillis()
+        val startTime = System.currentTimeMillis()
         val map: HashMap<String, Int> = HashMap()
         // Получение фабрики, чтобы после получить билдер документов
         val factory = DocumentBuilderFactory.newInstance()
@@ -37,31 +37,31 @@ class WithFile {
                 val fullInfo = Address(city, street, house, floorsNum)
                 val info = city + " " + street + " " + house + " " + floorsNum
                 createHashMap(info, map)
-//                File("addressBook.txt").appendText( city + " " + street + " " + house + " " +  floorsNum + "\n")
                 listAddresses.add(fullInfo)
             }
-        getStatistics(createHashMap2(listAddresses), createHashMap2(listAddresses))
+        getStatistics(map, createHashMap2(listAddresses))
+        println("\nFile processing time: ${System.currentTimeMillis() - startTime} ms")
         return listAddresses
     }
 
     // CSV
     fun readCSV(filePath: String):List<Address> {
- //       val file = File(filePath).readLines()
-//       val file = File(filePath).readText()
-
-            var listAddresses = mutableListOf<Address>()
-//        val startTime = System.currentTimeMillis()
-//        val hashMap: HashMap<Address, Int> = HashMap()
-//        val InStr = file.inputStream()
+        val map: HashMap<String, Int> = HashMap()
+        val startTime = System.currentTimeMillis()
         val reader = BufferedReader(FileReader(filePath))
         val header = reader.readLine()
-        listAddresses = reader.lineSequence()
+        val listAddresses = reader.lineSequence()
             .filter { it.isNotBlank() }
             .map {
                 val (city, street, house, floorsNum) = it.split(';', ignoreCase = false, limit = 4)
                 Address(city.trim().removeSurrounding("\""), street.trim().removeSurrounding("\""), house.trim(), floorsNum.trim())
             }.toList().toMutableList()
-        getStatistics(createHashMap2(listAddresses), createHashMap2(listAddresses))
+        for (i in listAddresses){
+            val info = i.city + " " + i.street + " " + i.house + " " + i.floorsNum
+            createHashMap(info, map)
+        }
+        getStatistics(map, createHashMap2(listAddresses))
+        println("\nFile processing time: ${System.currentTimeMillis() - startTime} ms")
       return listAddresses
     }
 
@@ -76,14 +76,12 @@ class WithFile {
     }
 
         fun createHashMap(address: String, map: HashMap<String, Int>) {
-//            println(address)
             if (map.containsKey(address)) {
                 map[address] = map[address]!! + 1
             } else map[address] = 1
-//            println("${map[address]}")
         }
 
-        fun getStatistics(map: HashMap<Address, Int>, map2: HashMap<Address, Int>){
+        fun getStatistics(map: HashMap<String, Int>, map2: HashMap<Address, Int>){
             for (it in map){
                 if (it.value > 1)
                     println("Address ${it.key} repeated ${it.value} times")
